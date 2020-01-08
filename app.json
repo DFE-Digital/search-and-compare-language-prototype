@@ -1,0 +1,31 @@
+{
+  "name": "search-and-compare-ui",
+  "scripts": {},
+  "env": {
+    "API_URL": {
+      "required": true
+    },
+    "FEATURE_MAPS": {
+      "required": true
+    },
+    "google_cloud_platform_key_geocoding": {
+      "required": true
+    },
+    "google_cloud_platform_key_maps": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-nodejs"
+    },
+    {
+      "url": "https://github.com/jincod/dotnetcore-buildpack#v2.2.402"
+    }
+  ]
+}

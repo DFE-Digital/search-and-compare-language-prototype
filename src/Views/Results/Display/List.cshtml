@@ -1,0 +1,77 @@
+@model ResultsViewModel
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <p class="govuk-body search-results__count">@string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:n0}", Model.Courses.TotalCount) courses found</p>
+  </div>
+  <div class="govuk-grid-column-one-half">
+    <p class="govuk-body search-results__new-search">
+      <a href='@Url.Action("LocationWizard", "Filter")' class="govuk-link">New search</a>
+    </p>
+  </div>
+</div>
+
+@if (string.IsNullOrWhiteSpace(Model.FilterModel.query))
+{
+  @await Html.PartialAsync("SortBy", Model)
+}
+
+<ul class="govuk-list search-results">
+  @foreach (var item in Model.Courses.Items) {
+    var subjects = @item.CourseSubjects.Select(courseSubject => courseSubject.Subject.Name).ToArray();
+
+    <li>
+      <h3 class="govuk-heading-m govuk-!-margin-bottom-6">
+        <a href='@Url.Action("Index", "Course", new {courseCode = item.ProgrammeCode, providerCode = item.Provider.ProviderCode})' class="search-result-link">
+          <span class="govuk-!-font-size-19">
+            @item.Provider.Name
+          </span><br />
+          <span class="search-result-link-name govuk-!-font-size-24">
+            <span class="govuk-visually-hidden"> – </span>@item.Name <span title="Course code">(<span class="govuk-visually-hidden"> – Course code: </span>@item.ProgrammeCode)</span>
+          </span>
+        </a>
+      </h3>
+
+      <dl class="govuk-list--description">
+        @if (!string.IsNullOrEmpty(item.Mod) && item.Mod.Length > 1)
+        {
+          <dt class="govuk-list--description__label">Course</dt>
+          <dd>@item.Mod</dd>
+        }
+        @if (item.Distance != null)
+        {
+          <dt class="govuk-list--description__label">Distance</dt>
+          <dd>
+            @item.Distance.FormattedDistance()
+            <span class="govuk-list--description__hint">
+              to the training provider or their nearest training location
+            </span>
+          </dd>
+          if (item.DistanceAddress != null)
+          {
+            <dt class="govuk-list--description__label">Nearest address</dt>
+            <dd>@(item.DistanceAddress.Replace("\n", ", "))</dd>
+          }
+        }
+        <dt class="govuk-list--description__label">Financial support</dt>
+        <dd>@item.FundingOptions()</dd>
+        @if (!string.IsNullOrEmpty(item.AccreditingProvider?.Name) && item.Provider.Name != item.AccreditingProvider?.Name)
+        {
+          <dt class="govuk-list--description__label">Accredited body</dt>
+          <dd>@item.AccreditingProvider.Name</dd>
+        }
+        @if (item.DistanceAddress == null && item.ProviderLocation != null)
+        {
+          <dt class="govuk-list--description__label">Main address</dt>
+          <dd>@(item.ProviderLocation.Address.Replace("\n", ", "))</dd>
+        }
+        @if (Model.FilterModel.hasvacancies == false)
+        {
+          <dt class="govuk-list--description__label">Vacancies</dt>
+          <dd>@(item.HasVacancies ? "Yes" : "No")</dd>
+        }
+      </dl>
+    </li>
+  }
+</ul>
+@await Html.PartialAsync("Pagination", Model)

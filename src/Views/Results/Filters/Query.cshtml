@@ -1,0 +1,11 @@
+@model ResultsFilter
+
+<div class="filter-form">
+  <h2 class="govuk-heading-s filter-form__title">
+    Provider name<span class="govuk-visually-hidden">:</span>
+  </h2>
+  <p class="govuk-body filter-form__value">
+    @Model.query
+  </p>
+  <a href='@Url.Action("Location", "Filter", Model.ToRouteValues())' class="govuk-link">Change provider or choose a location</a>
+</div>

@@ -1,0 +1,17 @@
+@model ResultsFilter
+
+<div class="filter-form">
+  <h2 class="govuk-heading-s filter-form__title">
+    Location<span class="govuk-visually-hidden">:</span>
+  </h2>
+  <p class="govuk-body filter-form__value">
+    @if(Model.Coordinates != null && Model.RadiusOption != null) {
+      @Model.loc
+      <span class="govuk-caption-m">Within @Model.rad miles of the pin</span>
+      <img src="https://maps.googleapis.com/maps/api/staticmap?key=@(Environment.GetEnvironmentVariable("google_cloud_platform_key_maps"))&center=@(Model.Coordinates.Latitude),@(Model.Coordinates.Longitude)&zoom=@(Model.GetGoogleMapRadius())&size=300x200&scale=2&markers=@(Model.Coordinates.Latitude),@(Model.Coordinates.Longitude)" alt="Map showing @Model.rad miles of @Model.loc" class="google-map-static"/>
+    } else {
+      <text>Across England</text>
+    }
+  </p>
+  <a href='@Url.Action("Location", "Filter", Model.ToRouteValues())' class="govuk-link">Change location or choose a provider</a>
+</div>
